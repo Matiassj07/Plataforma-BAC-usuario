@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Users, Plus, Pencil, Trash2, Key, Copy, Check } from "lucide-react";
 import { crearEmpleado, actualizarEmpleado, eliminarEmpleado } from "@/lib/dashboard/user-actions";
 import { formatearFecha } from "@/lib/utils";
+import { DateInput } from "@/components/DateInput";
 import type { PersonalRolEnum } from "@/lib/types";
 
 const ROL_DESCRIPTIONS: Record<PersonalRolEnum, string> = {
@@ -299,6 +300,15 @@ export default function PersonalClient({ initialEmpleados, soloLectura }: Props)
                     onChange={(e) => setForm({ ...form, area: e.target.value })}
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-medium text-bac-gray-text">Fecha de renovación</label>
+                <DateInput
+                  value={form.fecha_renovacion}
+                  onChange={(v) => setForm({ ...form, fecha_renovacion: v })}
+                  className="w-full mt-1 px-3 py-2 text-sm border border-bac-gray-border rounded-lg focus:outline-none focus:ring-2 focus:ring-bac-red/30"
+                />
               </div>
 
             </div>

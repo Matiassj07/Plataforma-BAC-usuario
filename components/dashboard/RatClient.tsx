@@ -802,13 +802,31 @@ export default function RatClient({
                           <div key={key}>
                             <label className="text-xs font-medium text-bac-gray-text">{col.label}</label>
                             <select
-                              className="w-full mt-1 px-3 py-2 text-sm border border-bac-gray-border rounded-lg focus:outline-none focus:ring-2 focus:ring-bac-red/30"
+                              className="w-full mt-1 px-3 py-2 text-sm border border-bac-gray-border rounded-lg focus:outline-none focus:ring-2 focus:ring-bac-red/30 bg-white"
                               value={act[key] ?? ""}
                               onChange={(e) => updateAct(idx, key, e.target.value)}
                             >
                               <option value="">Seleccionar</option>
                               <option value="si">Sí</option>
                               <option value="no">No</option>
+                            </select>
+                          </div>
+                        );
+                      }
+                      if (key === "base_licitud") {
+                        return (
+                          <div key={key}>
+                            <label className="text-xs font-medium text-bac-gray-text">{col.label}</label>
+                            <select
+                              className="w-full mt-1 px-3 py-2 text-sm border border-bac-gray-border rounded-lg focus:outline-none focus:ring-2 focus:ring-bac-red/30 bg-white"
+                              value={BASES_LICITUD.includes(act[key] ?? "") ? act[key] : act[key] ? "__otro__" : ""}
+                              onChange={(e) => updateAct(idx, key, e.target.value === "__otro__" ? "" : e.target.value)}
+                            >
+                              <option value="">Seleccionar</option>
+                              {BASES_LICITUD.map((b) => (
+                                <option key={b} value={b}>{b}</option>
+                              ))}
+                              <option value="__otro__">Otro (especificar)</option>
                             </select>
                           </div>
                         );
@@ -1446,6 +1464,7 @@ function AgregarActividadRatModalUser({
     almacenamiento: "",
     plazo_conservacion: "",
     destinatarios: "",
+    perfiles_automatizados: "",
     transferencias_internacionales: "",
     medidas_seguridad: "",
     activo_informacion: "",
@@ -1468,13 +1487,14 @@ function AgregarActividadRatModalUser({
 
   const camposOpcionales = [
     { key: "categorias_especiales", label: "Categorías Especiales de Datos" },
+    { key: "perfiles_automatizados", label: "Elaboración de Perfiles Automatizados", tipo: "bool" },
     { key: "categorias_titulares", label: "Categorías de Titulares" },
     { key: "origen_datos", label: "Origen de los Datos" },
     { key: "articulo_lopdp", label: "Artículo LOPDP" },
     { key: "almacenamiento", label: "Almacenamiento" },
     { key: "plazo_conservacion", label: "Plazo de Conservación" },
     { key: "destinatarios", label: "Destinatarios" },
-    { key: "transferencias_internacionales", label: "Transferencias Internacionales de Datos" },
+    { key: "transferencias_internacionales", label: "Transferencias Internacionales de Datos", tipo: "bool" },
     { key: "medidas_seguridad", label: "Medidas Técnicas y Organizativas de Seguridad" },
     { key: "activo_informacion", label: "Activo de Información" },
   ];
@@ -1579,12 +1599,24 @@ function AgregarActividadRatModalUser({
               {camposOpcionales.map((c) => (
                 <div key={c.key}>
                   <label className="mb-1 block text-xs font-medium text-gray-700">{c.label}</label>
-                  <input
-                    className="w-full rounded-lg border border-bac-gray-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bac-red/30"
-                    value={form[c.key as keyof typeof form]}
-                    onChange={(e) => setForm((p) => ({ ...p, [c.key]: e.target.value }))}
-                    placeholder={c.label}
-                  />
+                  {(c as any).tipo === "bool" ? (
+                    <select
+                      className="w-full rounded-lg border border-bac-gray-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bac-red/30 bg-white"
+                      value={form[c.key as keyof typeof form]}
+                      onChange={(e) => setForm((p) => ({ ...p, [c.key]: e.target.value }))}
+                    >
+                      <option value="">Seleccionar</option>
+                      <option value="si">Sí</option>
+                      <option value="no">No</option>
+                    </select>
+                  ) : (
+                    <input
+                      className="w-full rounded-lg border border-bac-gray-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bac-red/30"
+                      value={form[c.key as keyof typeof form]}
+                      onChange={(e) => setForm((p) => ({ ...p, [c.key]: e.target.value }))}
+                      placeholder={c.label}
+                    />
+                  )}
                 </div>
               ))}
             </div>

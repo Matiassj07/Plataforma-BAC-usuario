@@ -900,10 +900,16 @@ export async function agregarActividadRat(
     .single();
   if (!ver) throw new Error("Versión no encontrada");
 
+  const BOOL_CAMPOS_RAT = new Set(["perfiles_automatizados", "transferencias_internacionales"]);
   const insertData: Record<string, unknown> = { rat_version_id: versionId };
   if (datos) {
     for (const [k, v] of Object.entries(datos)) {
-      if (CAMPOS_RAT_PERMITIDOS.has(k) && v && typeof v === "string" && v.trim()) insertData[k] = v.trim();
+      if (!CAMPOS_RAT_PERMITIDOS.has(k) || !v || typeof v !== "string" || !v.trim()) continue;
+      if (BOOL_CAMPOS_RAT.has(k)) {
+        insertData[k] = v.trim() === "si" ? true : v.trim() === "no" ? false : null;
+      } else {
+        insertData[k] = v.trim();
+      }
     }
   }
   if (!insertData.nombre_actividad) insertData.nombre_actividad = "Nueva actividad";
